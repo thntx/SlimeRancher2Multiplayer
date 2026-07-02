@@ -10,9 +10,9 @@
 |:-----------------:|:------:|:-----------------------------------------------------------------------------:|
 |  Player Movement  |   🟩   |                               Fully functional                                |
 | Player Animations |   🟩   |                               Fully functional                                |
-|  Player Sound FX  |   🟨   |                             Water splash missing                              |
-| Player Visual FX  |   🟨   |               Water splash particle + Vac suction trail missing               |
-| Player Inventory  |   🟥   |                                Not implemented                                |
+|  Player Sound FX  |   🟩   |                               Fully functional                                |
+| Player Visual FX  |   🟩   |                 Water splash + vac suction trail synchronised                |
+| Player Inventory  |   🟩   |               Stored per save on the host, restored on join                  |
 | Initial Save load |   🟩   | Everything that is ___currently___ synchronised will be loaded on Player join |
 |  Map Expansions   |   🟩   |                               Fully functional                                |
 |      Slimes       |   🟩   |                               Fully functional                                |
@@ -29,10 +29,10 @@
 |   Market Prices   |   🟩   |             Fully functional (Including price change indicators)              |
 |      Plot FX      |   🟩   |                               Fully functional                                |
 |     Market FX     |   🟩   |                               Fully functional                                |
-|  Resource Nodes   |   🟥   |                                Not implemented                                |
+|  Resource Nodes   |   🟩   |               Host places nodes; harvest state + loot synced                 |
 |   Gordo Slimes    |   🟩   |                               Fully functional                                |
 |      Geysers      |   🟩   |                               Fully functional                                |
-|        Map        |   🟨   |     Lightning has duplicate loot, Tornados and map icons not synchronised     |
+|        Map        |   🟨   |      Players + weather icons synced, Tornados not synchronised               |
 |    Teleporters    |   🟩   |                               Fully functional                                |
 |      Weather      |   🟩   |                               Fully functional                                |
 |     Lightning     |   🟩   |                               Fully functional                                |

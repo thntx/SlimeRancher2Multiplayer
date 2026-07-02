@@ -10,7 +10,7 @@ namespace SR2MP.Patches.FX;
 [HarmonyPatch(typeof(SplashOnTrigger), nameof(SplashOnTrigger.SpawnAndPlayFX))]
 internal static class OnWaterSplash
 {
-    public static void Postfix(SplashOnTrigger __instance, GameObject fx, Collider collider)
+    public static void Postfix(SplashOnTrigger __instance, GameObject prefab, Collider collider)
     {
         if (HandlingPacket)
             return;
@@ -18,7 +18,7 @@ internal static class OnWaterSplash
         if (!Main.Server.IsRunning && !Main.Client.IsConnected)
             return;
 
-        if (!fx || !collider)
+        if (!prefab || !collider)
             return;
 
         if (!collider.GetComponentInParent<SRCharacterController>(true))
@@ -35,7 +35,7 @@ internal static class OnWaterSplash
         {
             FX = PlayerFXType.WaterSplash,
             Position = position,
-            FXName = fx.name.Replace(' ', '_')
+            FXName = prefab.name.Replace(' ', '_')
         };
 
         Main.SendToAllOrServer(packet);
