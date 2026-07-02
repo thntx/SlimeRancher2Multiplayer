@@ -68,6 +68,7 @@ internal sealed class ReSyncManager
         SendPricesPacket(endPoint);
         SendWeatherPacket(endPoint);
         SendResourceNodesPacket(endPoint);
+        SendPrismaForecastPacket(endPoint);
 
         SrLogger.LogMessage($"Player {playerId} resynced!", $"Player {playerId} ({endPoint}) resynced!");
     }
@@ -217,6 +218,13 @@ internal sealed class ReSyncManager
 
     private static void SendResourceNodesPacket(IPEndPoint client)
         => Main.Server.SendToClient(CreateResourceNodesPacket(), client);
+
+    private static void SendPrismaForecastPacket(IPEndPoint client)
+    {
+        var packet = NetworkPrismaManager.BuildPacket();
+        if (packet != null)
+            Main.Server.SendToClient(packet, client);
+    }
 
     private static InitialResourceNodesPacket CreateResourceNodesPacket()
     {
