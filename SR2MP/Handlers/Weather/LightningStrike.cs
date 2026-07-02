@@ -14,6 +14,12 @@ internal sealed class LightningStrikeHandler : BasePacketHandler<LightningStrike
         var lightning = Object.Instantiate(NetworkWeatherManager.Lightning.gameObject);
         lightning.name += " (net)";
         lightning.transform.position = packet.Position;
+
+        // The originating side already spawns the loot and syncs it through the
+        // actor system, so a networked strike must not roll its own drops.
+        var strike = lightning.GetComponent<Il2CppMonomiPark.SlimeRancher.World.LightningStrike>();
+        strike?.SpawnOptions?.Clear();
+
         return true;
     }
 }
