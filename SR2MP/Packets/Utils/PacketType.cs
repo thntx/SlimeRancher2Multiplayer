@@ -81,6 +81,8 @@ internal enum PacketType : byte
     TornadoDespawn = 90,          // Server -> All Clients                        Low                                   On weather tornado despawned
     DroneUpdate = 91,             // Server -> All Clients                        High (while drones active)            Ranch drone position sync
     PrismaForecast = 92,          // Server -> All Clients                        Low                                   Gray Labyrinth disruption forecast
+    BoomSlimeExplode = 93,        // Both Ways                                    Low (depends on slime count)          On Boom Slime explosion
+    CrystalSpikes = 94,           // Both Ways                                    Low (depends on slime count)          On Crystal Slime spike launch
     ModSync = 100,                // Server -> Client                             Low (manual)                          Sync Mod names on incompatible mod
     ModSyncAck = 101,             // Client -> Server                             Low (manual)                          Mod names on incompatible mod
     ApiCall = 253,                // Both Ways                                    Variable                              Backing for mod's api packets
