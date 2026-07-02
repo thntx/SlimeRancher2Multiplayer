@@ -345,6 +345,10 @@ public sealed class SR2MPClient
             }
             try
             {
+                // Report the final inventory state before announcing the leave
+                // so the host persists what the player actually carries.
+                NetworkPlayerInventory.SendLocalInventory();
+
                 var leavePacket = new PlayerLeavePacket
                 {
                     Type = PacketType.PlayerLeave,

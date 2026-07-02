@@ -166,6 +166,9 @@ internal partial class NetworkPlayer : MonoBehaviour
 
         transformTimer -= UnityEngine.Time.unscaledDeltaTime;
 
+        if (IsLocal)
+            NetworkPlayerInventory.TickAutosave(UnityEngine.Time.unscaledDeltaTime);
+
         if (!IsLocal)
         {
             var timer = Mathf.InverseLerp(interpolationStart, interpolationEnd, UnityEngine.Time.unscaledTime);

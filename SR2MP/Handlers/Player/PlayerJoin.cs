@@ -5,6 +5,7 @@ using SR2MP.Handlers.Internal;
 using SR2MP.Packets;
 using SR2MP.Packets.Player;
 using SR2MP.Packets.Utils;
+using SR2MP.Server.Managers;
 
 namespace SR2MP.Handlers.Player;
 
@@ -81,6 +82,21 @@ internal sealed class ServerPlayerJoinHandler : BasePlayerJoinHandler
         Main.Server.SendToAllExcept(joinChatPacket, clientEp);
         MultiplayerUI.Instance.RegisterSystemMessage($"{packet.PlayerName} joined the world!", $"SYSTEM_JOIN_HOST_{packet.PlayerId}_{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}", MultiplayerUI.SystemMessageConnect);
 
+        RestoreStoredInventory(packet.PlayerId, clientEp);
+
         return false;
+    }
+
+    private static void RestoreStoredInventory(string playerId, IPEndPoint clientEp)
+    {
+        var stored = PlayerInventoryStore.Get(PlayerInventoryHandler.CurrentSaveName(), playerId);
+        if (stored == null)
+            return;
+
+        Main.Server.SendToClient(new PlayerInventoryPacket
+        {
+            PlayerId = playerId,
+            Slots = stored
+        }, clientEp);
     }
 }
