@@ -67,6 +67,7 @@ internal sealed class ReSyncManager
         SendActorsPacket(endPoint, PlayerIdGenerator.GetPlayerIDNumber(playerId));
         SendPricesPacket(endPoint);
         SendWeatherPacket(endPoint);
+        SendResourceNodesPacket(endPoint);
 
         SrLogger.LogMessage($"Player {playerId} resynced!", $"Player {playerId} ({endPoint}) resynced!");
     }
@@ -110,6 +111,7 @@ internal sealed class ReSyncManager
         var accessDoorsPacket  = CreateAccessDoorsPacket();
         var treasurePodsPacket = CreateTreasurePodsPacket();
         var pricesPacket       = CreatePricesPacket();
+        var resourceNodesPacket = CreateResourceNodesPacket();
 
         var money = SceneContext.Instance.PlayerState.GetCurrency(
             GameContext.Instance.LookupDirector._currencyList[0].Cast<ICurrency>());
@@ -142,6 +144,7 @@ internal sealed class ReSyncManager
             Main.Server.SendToClient(accessDoorsPacket,     client.EndPoint);
             Main.Server.SendToClient(treasurePodsPacket,    client.EndPoint);
             Main.Server.SendToClient(pricesPacket,          client.EndPoint);
+            Main.Server.SendToClient(resourceNodesPacket,   client.EndPoint);
 
             SendWeatherPacket(client.EndPoint);
             SendActorsPacket(client.EndPoint, PlayerIdGenerator.GetPlayerIDNumber(client.PlayerId));
@@ -210,6 +213,40 @@ internal sealed class ReSyncManager
         }
 
         return new InitialUpgradesPacket { Upgrades = upgrades };
+    }
+
+    private static void SendResourceNodesPacket(IPEndPoint client)
+        => Main.Server.SendToClient(CreateResourceNodesPacket(), client);
+
+    private static InitialResourceNodesPacket CreateResourceNodesPacket()
+    {
+        var nodes = new List<InitialResourceNodesPacket.ResourceNodeEntry>();
+
+        foreach (var spawnerModel in GameState.resourceNodeSpawnerModels)
+        {
+            var model = spawnerModel.Value;
+            if (model == null)
+                continue;
+
+            var resources = new List<int>();
+            if (model.resourcesToSpawn != null)
+            {
+                foreach (var resource in model.resourcesToSpawn)
+                    resources.Add(NetworkActorManager.GetPersistentID(resource));
+            }
+
+            nodes.Add(new InitialResourceNodesPacket.ResourceNodeEntry
+            {
+                SpawnerId = spawnerModel.Key,
+                State = (byte)model.nodeState,
+                DefinitionIndex = NetworkResourceNodeManager.GetDefinitionIndex(model.resourceNodeDefinition),
+                VariantIndex = model.resourceNodeVariantIndex,
+                DespawnAtWorldTime = model.despawnAtWorldTime,
+                ResourcesToSpawn = resources
+            });
+        }
+
+        return new InitialResourceNodesPacket { Nodes = nodes };
     }
 
     private static void SendRefineryPacket(IPEndPoint client)
