@@ -76,6 +76,9 @@ internal enum PacketType : byte
     ResourceNodeState = 85,       // Both Ways                                    Medium (manual)                       On Resource Node harvest state change
     InitialResourceNodes = 86,    // Server -> Client                             Low (depends on join)                 Resource Nodes on join
     PlayerInventory = 87,         // Both Ways                                    Low (periodic + join/leave)           Client vac inventory persistence
+    TornadoSpawn = 88,            // Server -> All Clients                        Low                                   On weather tornado spawned
+    TornadoUpdate = 89,           // Server -> All Clients                        High (while tornado alive)            Tornado position sync
+    TornadoDespawn = 90,          // Server -> All Clients                        Low                                   On weather tornado despawned
     ModSync = 100,                // Server -> Client                             Low (manual)                          Sync Mod names on incompatible mod
     ModSyncAck = 101,             // Client -> Server                             Low (manual)                          Mod names on incompatible mod
     ApiCall = 253,                // Both Ways                                    Variable                              Backing for mod's api packets
