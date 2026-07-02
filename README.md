@@ -15,19 +15,19 @@
 | Player Inventory  |   🟩   |               Stored per save on the host, restored on join                  |
 | Initial Save load |   🟩   | Everything that is ___currently___ synchronised will be loaded on Player join |
 |  Map Expansions   |   🟩   |                               Fully functional                                |
-|      Slimes       |   🟧   |                               Dervish and Yolky behaviour synchronised        |
+|      Slimes       |   🟨   |        Dervish, Sloomber, Yolky, Boom & Crystal behaviours synchronised       |
 |  Slime Behaviour  |   🟩   |                               Fully functional                                |
 |  Actors (Items)   |   🟩   |                               Fully functional                                |
 |     Landplots     |   🟩   |                               Fully functional                                |
 | Landplot upgrades |   🟩   |                               Fully functional                                |
 |    Slimepedia     |   🟩   |                               Fully functional                                |
-|      Gadgets      |   🟨   |                Drones are not fully implemented                               |
+|      Gadgets      |   🟨   |     Ranch drones host-simulated & mirrored; explorer drones not synced        |
 |      Refinery     |   🟩   |                               Fully functional                                |
 |     Upgrades      |   🟩   |                               Fully functional                                |
 |       Money       |   🟩   |                               Fully functional                                |
 |       Time        |   🟩   |                               Fully functional                                |
 |    Decorations    |   🟩   |                               Fully functional                                |
-|  Gray Labyrinth   |   🟨   |                            Switches are functional                            |
+|  Gray Labyrinth   |   🟨   |                Switches + disruption forecasts synchronised                   |
 |   Market Prices   |   🟩   |             Fully functional (Including price change indicators)              |
 |      Plot FX      |   🟩   |                               Fully functional                                |
 |     Market FX     |   🟩   |                               Fully functional                                |
