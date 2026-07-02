@@ -7,7 +7,9 @@ namespace SR2MP;
 internal static class StartupCheck
 {
     private const string RequiredGameVersion = BuildInfo.ExactGameVersion;
-    private const string VersionUrl = "https://raw.githubusercontent.com/pyeight/SlimeRancher2Multiplayer/refs/heads/master/latestModVersion.txt";
+    // Fork builds answer to the fork's version file so an upstream release
+    // can neither nag nor force-quit players of this build.
+    private const string VersionUrl = "https://raw.githubusercontent.com/thntx/SlimeRancher2Multiplayer/refs/heads/feature/sync-completion/latestModVersion.txt";
     private const string DiscordUrl = BuildInfo.Discord;
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]

@@ -15,7 +15,7 @@ internal static class BuildInfo
     internal const string MelonVersion = "0.3.3"; 
     internal const string Version = "0.3.3"; // Auto-Dev_Do_not_remove
     internal const string Discord = "https://discord.com/invite/a7wfBw5feU";
-    internal const string SourceCode = "https://github.com/pyeight/SlimeRancher2Multiplayer";
+    internal const string SourceCode = "https://github.com/thntx/SlimeRancher2Multiplayer";
     internal const string Nexus = "https://www.nexusmods.com/slimerancher2/mods/118";
     internal const bool UsePrism = false;
     internal const string MinimumStarlightVersion = Starlight.BuildInfo.CodeVersion; // e.g "3.6.3", the min required SR2 version. No beta or alpha versions
