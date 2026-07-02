@@ -141,6 +141,35 @@ internal sealed class RemoteFXManager
         SrLogger.LogMessage("RemoteFXManager initialized");
     }
 
+    private readonly Dictionary<string, GameObject> splashFXCache = new();
+
+    /// <summary>
+    /// Resolves a splash FX prefab by name, falling back to the prefabs
+    /// referenced by the water volumes currently loaded.
+    /// </summary>
+    public GameObject? GetSplashFX(string name)
+    {
+        if (AllFX.TryGetValue(name, out var cached) && cached)
+            return cached;
+
+        if (splashFXCache.TryGetValue(name, out var splash) && splash)
+            return splash;
+
+        foreach (var trigger in Resources.FindObjectsOfTypeAll<SplashOnTrigger>())
+        {
+            RegisterSplashFX(trigger.splashFX);
+            RegisterSplashFX(trigger.playerSplashFX);
+        }
+
+        return splashFXCache.TryGetValue(name, out splash) && splash ? splash : null;
+    }
+
+    private void RegisterSplashFX(GameObject? fx)
+    {
+        if (fx)
+            splashFXCache[fx!.name.Replace(' ', '_')] = fx;
+    }
+
     public bool TryGetFXType(SECTR_AudioCue cue, out PlayerFXType fxType) => TryGetFXType(cue, PlayerAudioCueMap, out fxType);
 
     public bool TryGetFXType(SECTR_AudioCue cue, out WorldFXType fxType) => TryGetFXType(cue, WorldAudioCueMap, out fxType);

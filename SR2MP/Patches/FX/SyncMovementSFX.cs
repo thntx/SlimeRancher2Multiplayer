@@ -7,8 +7,8 @@ namespace SR2MP.Patches.FX;
 [HarmonyPatch(typeof(SRCharacterController), nameof(SRCharacterController.Play), typeof(SECTR_AudioCue), typeof(bool))]
 internal static class SyncMovementSfx
 {
-    private static bool IsMovementSound(string cueName) // Jump, Run, Step and Land are specific values, do not change, they are the names used in the game
-        => cueName.Contains("Jump") || cueName.Contains("Run") || cueName.Contains("Step") || cueName.Contains("Land");
+    private static bool IsMovementSound(string cueName) // Jump, Run, Step, Land and Splash are specific values, do not change, they are the names used in the game
+        => cueName.Contains("Jump") || cueName.Contains("Run") || cueName.Contains("Step") || cueName.Contains("Land") || cueName.Contains("Splash");
 
     public static void Postfix(SRCharacterController __instance, SECTR_AudioCue cue)
     {

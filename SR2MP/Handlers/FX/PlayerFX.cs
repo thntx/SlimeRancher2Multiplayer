@@ -1,4 +1,5 @@
 using System.Net;
+using SR2MP.Components.Player;
 using SR2MP.Handlers.Internal;
 using SR2MP.Packets.FX;
 using SR2MP.Packets.Utils;
@@ -15,13 +16,20 @@ internal sealed class PlayerFXHandler : BasePacketHandler<PlayerFXPacket>
 
         try
         {
-            if (!IsPlayerSoundDictionary[packet.FX])
+            if (packet.FX == PlayerFXType.WaterSplash)
+            {
+                var splashPrefab = FXManager.GetSplashFX(packet.FXName);
+                if (splashPrefab)
+                    FXHelpers.SpawnAndPlayFX(splashPrefab, packet.Position, Quaternion.identity);
+            }
+            else if (!IsPlayerSoundDictionary[packet.FX])
             {
                 var fxPrefab = FXManager.PlayerFXMap[packet.FX];
                 FXHelpers.SpawnAndPlayFX(fxPrefab, packet.Position, Quaternion.identity);
             }
             else
             {
+                SetRemoteVacTrail(packet);
                 var cue = FXManager.PlayerAudioCueMap[packet.FX];
 
                 if (ShouldPlayerSoundBeTransientDictionary[packet.FX])
@@ -46,5 +54,17 @@ internal sealed class PlayerFXHandler : BasePacketHandler<PlayerFXPacket>
         }
 
         return true;
+    }
+
+    private static void SetRemoteVacTrail(PlayerFXPacket packet)
+    {
+        if (packet.FX is not (PlayerFXType.VacRunningStart or PlayerFXType.VacRunningEnd))
+            return;
+
+        if (!PlayerObjects.TryGetValue(packet.Player, out var playerObject) || !playerObject)
+            return;
+
+        playerObject.GetComponent<NetworkPlayer>()?
+            .SetVacTrailActive(packet.FX == PlayerFXType.VacRunningStart);
     }
 }
