@@ -49,10 +49,18 @@ internal sealed partial class NetworkActorManager
             GameState.identifiablesByIdent.Add(type, actors);
         }
         
+        GameObject? actor;
+
         HandlingPacket = true;
-        var actor = InstantiationHelpers.InstantiateActorFromModel(model.Cast<ActorModel>());
-        HandlingPacket = false;
-        
+        try
+        {
+            actor = InstantiationHelpers.InstantiateActorFromModel(model.Cast<ActorModel>());
+        }
+        finally
+        {
+            HandlingPacket = false;
+        }
+
         if (!actor)
             return true;
         
@@ -84,9 +92,17 @@ internal sealed partial class NetworkActorManager
         var model = GameState.CreateGadgetModel(type.Cast<GadgetDefinition>(), actorId, scene, position, false);
         model.eulerRotation = rotation.eulerAngles;
         
+        GameObject gadget;
+
         HandlingPacket = true;
-        var gadget = GadgetDirector.InstantiateGadgetFromModel(model);
-        HandlingPacket = false;
+        try
+        {
+            gadget = GadgetDirector.InstantiateGadgetFromModel(model);
+        }
+        finally
+        {
+            HandlingPacket = false;
+        }
         
         gadget.transform.SetPositionAndRotation(position, rotation);
         
@@ -161,10 +177,18 @@ internal sealed partial class NetworkActorManager
             GameState.identifiablesByIdent.Add(type, actors);
         }
         
+        GameObject? actor;
+
         HandlingPacket = true;
-        var actor = InstantiationHelpers.InstantiateActorFromModel(model.Cast<ActorModel>());
-        HandlingPacket = false;
-        
+        try
+        {
+            actor = InstantiationHelpers.InstantiateActorFromModel(model.Cast<ActorModel>());
+        }
+        finally
+        {
+            HandlingPacket = false;
+        }
+
         if (!actor)
             return true;
         
@@ -229,10 +253,18 @@ internal sealed partial class NetworkActorManager
             GameState.identifiablesByIdent.Add(type, actors);
         }
         
+        GameObject? actor;
+
         HandlingPacket = true;
-        var actor = InstantiationHelpers.InstantiateActorFromModel(model.Cast<ActorModel>());
-        HandlingPacket = false;
-        
+        try
+        {
+            actor = InstantiationHelpers.InstantiateActorFromModel(model.Cast<ActorModel>());
+        }
+        finally
+        {
+            HandlingPacket = false;
+        }
+
         if (!actor)
             return true;
         
@@ -307,10 +339,18 @@ internal sealed partial class NetworkActorManager
             GameState.identifiablesByIdent.Add(type, actors);
         }
         
+        GameObject? actor;
+
         HandlingPacket = true;
-        var actor = InstantiationHelpers.InstantiateActorFromModel(model.Cast<ActorModel>());
-        HandlingPacket = false;
-        
+        try
+        {
+            actor = InstantiationHelpers.InstantiateActorFromModel(model.Cast<ActorModel>());
+        }
+        finally
+        {
+            HandlingPacket = false;
+        }
+
         if (!actor)
             return true;
         
@@ -392,9 +432,17 @@ internal sealed partial class NetworkActorManager
             GameState.identifiablesByIdent.Add(type, actors);
         }
         
+        GameObject? actor;
+
         HandlingPacket = true;
-        var actor = InstantiationHelpers.InstantiateActorFromModel(model.Cast<ActorModel>());
-        HandlingPacket = false;
+        try
+        {
+            actor = InstantiationHelpers.InstantiateActorFromModel(model.Cast<ActorModel>());
+        }
+        finally
+        {
+            HandlingPacket = false;
+        }
 
         if (!actor)
             return true;
@@ -439,8 +487,14 @@ internal sealed partial class NetworkActorManager
             if (targetJoint != null)
             {
                 HandlingPacket = true;
-                cycle.Attach(targetJoint);
-                HandlingPacket = false;
+                try
+                {
+                    cycle.Attach(targetJoint);
+                }
+                finally
+                {
+                    HandlingPacket = false;
+                }
 
                 produceModel.state = state;
                 produceModel.progressTime = progress;
@@ -508,10 +562,18 @@ internal sealed partial class NetworkActorManager
             GameState.identifiablesByIdent.Add(type, actors);
         }
         
+        GameObject? actor;
+
         HandlingPacket = true;
-        var actor = InstantiationHelpers.InstantiateActorFromModel(model.Cast<ActorModel>());
-        HandlingPacket = false;
-        
+        try
+        {
+            actor = InstantiationHelpers.InstantiateActorFromModel(model.Cast<ActorModel>());
+        }
+        finally
+        {
+            HandlingPacket = false;
+        }
+
         if (!actor)
             return true;
         
@@ -564,9 +626,17 @@ internal sealed partial class NetworkActorManager
         
         identifiableModel = model.TryCast<IdentifiableModel>();
         
+        GameObject gadget;
+
         HandlingPacket = true;
-        var gadget = GadgetDirector.InstantiateGadgetFromModel(model);
-        HandlingPacket = false;
+        try
+        {
+            gadget = GadgetDirector.InstantiateGadgetFromModel(model);
+        }
+        finally
+        {
+            HandlingPacket = false;
+        }
         
         gadget.transform.SetPositionAndRotation(position, rotation);
         
@@ -595,9 +665,17 @@ internal sealed partial class NetworkActorManager
         
         identifiableModel = model.Cast<IdentifiableModel>();
         
+        GameObject gadget;
+
         HandlingPacket = true;
-        var gadget = GadgetDirector.InstantiateGadgetFromModel(model);
-        HandlingPacket = false;
+        try
+        {
+            gadget = GadgetDirector.InstantiateGadgetFromModel(model);
+        }
+        finally
+        {
+            HandlingPacket = false;
+        }
         
         gadget.transform.SetPositionAndRotation(position, rotation);
         
@@ -649,9 +727,17 @@ internal sealed partial class NetworkActorManager
         
         identifiableModel = droneModel.Cast<IdentifiableModel>();
         
+        GameObject gadget;
+
         HandlingPacket = true;
-        var gadget = GadgetDirector.InstantiateGadgetFromModel(droneModel.Cast<GadgetModel>());
-        HandlingPacket = false;
+        try
+        {
+            gadget = GadgetDirector.InstantiateGadgetFromModel(droneModel.Cast<GadgetModel>());
+        }
+        finally
+        {
+            HandlingPacket = false;
+        }
         gadget.GetComponent<DroneStation>().SetModel(droneModel.Cast<GadgetModel>());
         
         gadget.transform.SetPositionAndRotation(position, rotation);
@@ -685,9 +771,17 @@ internal sealed partial class NetworkActorManager
         
         identifiableModel = gadgetModel.Cast<IdentifiableModel>();
         
+        GameObject gadget;
+
         HandlingPacket = true;
-        var gadget = GadgetDirector.InstantiateGadgetFromModel(gadgetModel);
-        HandlingPacket = false;
+        try
+        {
+            gadget = GadgetDirector.InstantiateGadgetFromModel(gadgetModel);
+        }
+        finally
+        {
+            HandlingPacket = false;
+        }
         
         gadget.transform.SetPositionAndRotation(position, rotation);
         
@@ -739,10 +833,18 @@ internal sealed partial class NetworkActorManager
             GameState.identifiablesByIdent.Add(type, actors);
         }
         
+        GameObject? actor;
+
         HandlingPacket = true;
-        var actor = InstantiationHelpers.InstantiateActorFromModel(model.Cast<ActorModel>());
-        HandlingPacket = false;
-        
+        try
+        {
+            actor = InstantiationHelpers.InstantiateActorFromModel(model.Cast<ActorModel>());
+        }
+        finally
+        {
+            HandlingPacket = false;
+        }
+
         if (!actor)
             return true;
         
@@ -806,10 +908,18 @@ internal sealed partial class NetworkActorManager
             GameState.identifiablesByIdent.Add(type, actors);
         }
         
+        GameObject? actor;
+
         HandlingPacket = true;
-        var actor = InstantiationHelpers.InstantiateActorFromModel(model.Cast<ActorModel>());
-        HandlingPacket = false;
-        
+        try
+        {
+            actor = InstantiationHelpers.InstantiateActorFromModel(model.Cast<ActorModel>());
+        }
+        finally
+        {
+            HandlingPacket = false;
+        }
+
         if (!actor)
             return true;
         

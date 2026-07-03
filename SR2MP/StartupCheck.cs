@@ -11,6 +11,7 @@ internal static class StartupCheck
     // can neither nag nor force-quit players of this build.
     private const string VersionUrl = "https://raw.githubusercontent.com/thntx/SlimeRancher2Multiplayer/refs/heads/feature/sync-completion/latestModVersion.txt";
     private const string DiscordUrl = BuildInfo.Discord;
+    private const string ReleasesUrl = BuildInfo.SourceCode + "/releases";
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     private static extern int MessageBoxW(IntPtr hWnd, string text, string caption, uint type);
@@ -114,13 +115,13 @@ internal static class StartupCheck
                         "Your SR2MP mod is outdated!\n\n" +
                         $"Your version: {currentModVersion}\n" +
                         $"Latest version: {latestVersion}\n\n" +
-                        "Click OK to join our Discord or get a new version from NexusMods.\n" +
+                        "Click OK to download the new version from the GitHub releases page.\n" +
                         "The game will close after clicking OK.",
                         "SR2MP – Update Available",
                         MB_OK | MB_ICON_WARNING, true
                     );
 
-                    OpenUrl(DiscordUrl);
+                    OpenUrl(ReleasesUrl);
                     shouldQuit = true;
                     break;
 

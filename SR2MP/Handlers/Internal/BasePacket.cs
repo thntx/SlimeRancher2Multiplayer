@@ -24,7 +24,20 @@ internal abstract class BasePacketHandler<T> : IClientPacketHandler, IServerPack
     private void ProcessPacket(PacketReader reader, IPEndPoint? clientEp)
     {
         var packet = reader.ReadPacket<T>();
-        var shouldSend = Handle(packet, clientEp);
+
+        bool shouldSend;
+
+        try
+        {
+            shouldSend = Handle(packet, clientEp);
+        }
+        finally
+        {
+            // Handlers are synchronous; if one throws between setting and
+            // clearing HandlingPacket, the leaked flag would silently mute
+            // every patch in the mod for the rest of the session.
+            HandlingPacket = false;
+        }
 
         if (IsServerSide && shouldSend)
             PacketSender.SendToAllExcept(packet, clientEp);

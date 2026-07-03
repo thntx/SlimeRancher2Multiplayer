@@ -61,20 +61,45 @@ internal static class NetworkWeatherManager
         => GameContext.Instance.AutoSaveDirector._saveReferenceTranslation
             .GetPersistenceId(state.Cast<IWeatherState>());
 
+    /// <summary>
+    /// True while a weather snapshot is being applied. Weather patches treat
+    /// this like <see cref="GlobalVariables.HandlingPacket"/>, but scoped so a
+    /// multi-frame apply cannot mute every other system in the mod.
+    /// </summary>
+    private static bool applyingWeatherFlag;
+    private static float applyingWeatherSince;
+
+    /// <summary>
+    /// Self-clears after 30s as a watchdog: if the apply coroutine is
+    /// abandoned by the runner mid-exception, a stuck flag would otherwise
+    /// permanently stop weather from applying.
+    /// </summary>
+    internal static bool ApplyingWeather
+    {
+        get => applyingWeatherFlag && UnityEngine.Time.unscaledTime - applyingWeatherSince < 30f;
+        private set
+        {
+            applyingWeatherFlag = value;
+            applyingWeatherSince = UnityEngine.Time.unscaledTime;
+        }
+    }
+
     internal static IEnumerator Apply(WeatherPacket packet, bool immediate)
     {
         yield return new WaitFrames(3);
-        HandlingPacket = true;
+        ApplyingWeather = true;
+
+        try
+        {
 
         var registry = Registry;
         var localDirector = Director;
 
+        // Snapshot the zone keys in one frame; iterating the live dictionary
+        // across yields dies when the registry mutates it.
         var zoneKeys = new List<ZoneDefinition>();
         foreach (var zone in registry._zones)
-        {
             zoneKeys.Add(zone.Key);
-            yield return null;
-        }
 
         byte zoneId = 0;
         foreach (var zoneKey in zoneKeys)
@@ -91,6 +116,11 @@ internal static class NetworkWeatherManager
             foreach (var forecast in forecastCopy)
             {
                 yield return null;
+
+                var state = forecast.State?.TryCast<IWeatherState>();
+                if (state == null)
+                    continue;
+
                 var patternInstance = registry.GetWeatherPatternInstance(
                     zoneKey,
                     forecast.Pattern
@@ -98,10 +128,7 @@ internal static class NetworkWeatherManager
 
                 if (patternInstance == null)
                 {
-                    localDirector.StopState(
-                        forecast.State.Cast<IWeatherState>(),
-                        zone.Parameters
-                    );
+                    localDirector.StopState(state, zone.Parameters);
                 }
                 else
                 {
@@ -120,12 +147,16 @@ internal static class NetworkWeatherManager
 
             foreach (var forecast in data.WeatherForecasts)
             {
-                var pattern = WeatherUpdateHelper.GetPatternForZoneAndState(zoneKey, forecast.State.name);
+                var state = forecast.State?.TryCast<IWeatherState>();
+                if (state == null)
+                    continue;
+
+                var pattern = WeatherUpdateHelper.GetPatternForZoneAndState(zoneKey, forecast.State!.name);
                 yield return null;
 
                 zone.Forecast.Add(new WeatherModel.ForecastEntry
                 {
-                    State = forecast.State.Cast<IWeatherState>(),
+                    State = state,
                     Pattern = pattern,
                     Started = forecast.WeatherStarted,
                     StartTime = forecast.StartTime,
@@ -143,18 +174,22 @@ internal static class NetworkWeatherManager
         if (!registry._zones.TryGetValue(localDirector.Zone, out var activeZone))
             yield break;
 
+        // Copied in one frame: iterating the live forecast list across
+        // yields dies when the game updates it mid-apply.
         var activeCopy = new List<WeatherModel.ForecastEntry>();
         foreach (var activeForecast in activeZone.Forecast)
-        {
             activeCopy.Add(activeForecast);
-            yield return null;
-        }
 
         yield return null;
 
         foreach (var forecast in activeCopy)
         {
             yield return null;
+
+            var state = forecast.State?.TryCast<IWeatherState>();
+            if (state == null)
+                continue;
+
             var patternInstance = registry.GetWeatherPatternInstance(
                 localDirector.Zone,
                 forecast.Pattern
@@ -163,7 +198,7 @@ internal static class NetworkWeatherManager
             yield return null;
             if (patternInstance == null)
             {
-                localDirector.RunState(forecast.State.Cast<IWeatherState>(), activeZone.Parameters, immediate);
+                localDirector.RunState(state, activeZone.Parameters, immediate);
             }
             else
             {
@@ -178,6 +213,10 @@ internal static class NetworkWeatherManager
             yield return new WaitFrames(3);
         }
 
-        HandlingPacket = false;
+        }
+        finally
+        {
+            ApplyingWeather = false;
+        }
     }
 }

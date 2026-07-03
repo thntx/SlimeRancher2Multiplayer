@@ -49,35 +49,54 @@ internal sealed class WeatherPacket : IPacket
             Zones = new Dictionary<byte, WeatherZoneData>()
         };
 
-        byte zoneId = 0;
+        // Snapshot in a single frame: the registry mutates the zone and
+        // forecast collections, and iterating them across yields killed this
+        // coroutine mid-send, silently dropping the weather update.
+        var ok = true;
 
-        foreach (var zone in model._zoneDatas)
+        try
         {
-            yield return null;
-            var zoneData = new WeatherZoneData
-            {
-                WeatherForecasts = new List<WeatherForecast>(),
-                WindSpeed = zone.Value.Parameters.WindDirection
-            };
-            foreach (var forecast in zone.Value.Forecast)
-            {
-                yield return null;
-                if (!forecast.Started)
-                    continue;
+            byte zoneId = 0;
 
-                zoneData.WeatherForecasts.Add(new WeatherForecast
+            foreach (var zone in model._zoneDatas)
+            {
+                var zoneData = new WeatherZoneData
                 {
-                    State = forecast.State.Cast<WeatherStateDefinition>(),
-                    WeatherStarted = true,
-                    StartTime = forecast.StartTime,
-                    EndTime = forecast.EndTime
-                });
+                    WeatherForecasts = new List<WeatherForecast>(),
+                    WindSpeed = zone.Value.Parameters.WindDirection
+                };
+
+                foreach (var forecast in zone.Value.Forecast)
+                {
+                    if (!forecast.Started)
+                        continue;
+
+                    var state = forecast.State?.TryCast<WeatherStateDefinition>();
+                    if (state == null)
+                        continue;
+
+                    zoneData.WeatherForecasts.Add(new WeatherForecast
+                    {
+                        State = state,
+                        WeatherStarted = true,
+                        StartTime = forecast.StartTime,
+                        EndTime = forecast.EndTime
+                    });
+                }
+
+                packet.Zones.Add(zoneId++, zoneData);
             }
-
-            packet.Zones.Add(zoneId++, zoneData);
-
-            yield return new WaitFrames(3);
         }
+        catch (Exception ex)
+        {
+            SrLogger.LogError($"Failed to serialise weather update: {ex}");
+            ok = false;
+        }
+
+        if (!ok)
+            yield break;
+
+        yield return null;
 
         onComplete?.Invoke(packet);
     }

@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using Il2CppMonomiPark.SlimeRancher.Weather;
 using Il2CppMonomiPark.SlimeRancher.World;
+using SR2MP.Client.Managers;
 using SR2MP.Server.Managers;
 
 namespace SR2MP.Patches.Weather;
@@ -15,7 +16,7 @@ internal static class WeatherRegistryPatches
     public static bool RunPatternStatePrefix()
     {
         WeatherUpdateHelper.EnsureLookupInitialized();
-        return !Main.Client.IsConnected || HandlingPacket;
+        return !Main.Client.IsConnected || HandlingPacket || NetworkWeatherManager.ApplyingWeather;
     }
 
     [HarmonyPatch(nameof(WeatherRegistry.StopPatternState)), HarmonyPrefix]
@@ -26,6 +27,6 @@ internal static class WeatherRegistryPatches
         if (!zone)
             return false;
 
-        return !Main.Client.IsConnected || HandlingPacket;
+        return !Main.Client.IsConnected || HandlingPacket || NetworkWeatherManager.ApplyingWeather;
     }
 }

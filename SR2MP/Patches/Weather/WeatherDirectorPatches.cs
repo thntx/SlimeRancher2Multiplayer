@@ -1,5 +1,6 @@
 using HarmonyLib;
 using Il2CppMonomiPark.SlimeRancher.Weather;
+using SR2MP.Client.Managers;
 using SR2MP.Server.Managers;
 
 namespace SR2MP.Patches.Weather;
@@ -11,12 +12,12 @@ internal static class WeatherDirectorStatePatches
     public static bool Prefix()
     {
         WeatherUpdateHelper.EnsureLookupInitialized();
-        return !Main.Client.IsConnected || HandlingPacket;
+        return !Main.Client.IsConnected || HandlingPacket || NetworkWeatherManager.ApplyingWeather;
     }
 
     public static void Postfix()
     {
-        if (Main.Server.IsRunning && !HandlingPacket)
+        if (Main.Server.IsRunning && !HandlingPacket && !NetworkWeatherManager.ApplyingWeather)
         {
             WeatherUpdateHelper.SendWeatherUpdate();
         }

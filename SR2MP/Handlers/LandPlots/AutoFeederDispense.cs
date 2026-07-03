@@ -10,10 +10,15 @@ internal sealed class AutoFeederDispenseHandler : BasePacketHandler<AutoFeederDi
 {
     protected override bool Handle(AutoFeederDispensePacket packet, IPEndPoint? _)
     {
-        var model = GameState.landPlots[packet.ID];
-        var feeder = model.gameObj.GetComponentInChildren<SlimeFeeder>();
+        // The plot may not be loaded on this side (e.g. the host is away from
+        // the ranch); still relay the packet so other clients receive it.
+        if (!GameState.landPlots.TryGetValue(packet.ID, out var model) || !model.gameObj)
+            return true;
 
-        feeder._nextEject = packet.NextTime;
+        var feeder = model.gameObj.GetComponentInChildren<SlimeFeeder>();
+        if (feeder != null)
+            feeder._nextEject = packet.NextTime;
+
         return true;
     }
 }

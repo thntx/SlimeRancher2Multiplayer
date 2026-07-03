@@ -11,11 +11,12 @@ internal static class OnTreasurePodOpen
         if (HandlingPacket)
             return;
 
-        var packet = new TreasurePodPacket()
+        if (!int.TryParse(__instance._id.Replace("pod", string.Empty), out var podId))
         {
-            ID = int.Parse(__instance._id.Replace("pod", string.Empty))
-        };
+            SrLogger.LogWarning($"Could not parse treasure pod id '{__instance._id}'");
+            return;
+        }
 
-        Main.SendToAllOrServer(packet);
+        Main.SendToAllOrServer(new TreasurePodPacket { ID = podId });
     }
 }
